@@ -5,14 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight, Award, Code2, Star, Trophy } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { profile } from "@/data/profile";
-
-type ProfileStats = Record<string, number | string | null | undefined>;
-
-async function fetchStats(url: string): Promise<ProfileStats> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Profile data is unavailable");
-  return response.json() as Promise<ProfileStats>;
-}
+import { fetchProfileStats } from "@/lib/profile-stats";
 
 function ProfileCard({
   name,
@@ -48,17 +41,19 @@ function ProfileCard({
 }
 
 export default function CodingProfilesSection() {
-  const github = useQuery({ queryKey: ["github"], queryFn: () => fetchStats("/api/github"), staleTime: 5 * 60 * 1000 });
-  const leetcode = useQuery({ queryKey: ["leetcode"], queryFn: () => fetchStats("/api/leetcode"), staleTime: 5 * 60 * 1000 });
-  const codeforces = useQuery({ queryKey: ["codeforces"], queryFn: () => fetchStats("/api/codeforces"), staleTime: 5 * 60 * 1000 });
-  const codechef = useQuery({ queryKey: ["codechef"], queryFn: () => fetchStats("/api/codechef"), staleTime: 5 * 60 * 1000 });
-  const hackerrank = useQuery({ queryKey: ["hackerrank"], queryFn: () => fetchStats("/api/hackerrank"), staleTime: 5 * 60 * 1000 });
-  const solvedCounts = [leetcode.data?.totalSolved, codeforces.data?.problemsSolved, codechef.data?.problemsSolved];
+  const statsQuery = useQuery({ queryKey: ["profile-stats"], queryFn: fetchProfileStats, staleTime: 5 * 60 * 1000 });
+  const github = statsQuery.data?.github;
+  const leetcode = statsQuery.data?.leetcode;
+  const codeforces = statsQuery.data?.codeforces;
+  const codechef = statsQuery.data?.codechef;
+  const hackerrank = statsQuery.data?.hackerrank;
+  const solvedCounts = [leetcode?.totalSolved, codeforces?.problemsSolved, codechef?.problemsSolved];
   const numericSolvedCounts = solvedCounts.filter((count): count is number => typeof count === "number" && Number.isFinite(count));
   const totalSolved = numericSolvedCounts.length === solvedCounts.length
     ? numericSolvedCounts.reduce((total, count) => total + count, 0)
     : null;
-  const isLoadingTotal = leetcode.isPending || codeforces.isPending || codechef.isPending;
+  const isLoadingTotal = statsQuery.isPending;
+  const loading = statsQuery.isPending;
 
   return (
     <section id="profiles" className="section profiles-section section-anchor">
@@ -72,30 +67,30 @@ export default function CodingProfilesSection() {
         </div>
 
         <div className="profile-grid">
-          <ProfileCard name="GitHub" href={profile.links.github} icon={<FaGithub size={20} />} index="01" loading={github.isPending} entries={[
-            { label: "Followers", value: github.data?.followers },
-            { label: "Public repositories", value: github.data?.publicRepos },
-            { label: "Total stars", value: github.data?.totalStars },
+          <ProfileCard name="GitHub" href={profile.links.github} icon={<FaGithub size={20} />} index="01" loading={loading} entries={[
+            { label: "Followers", value: github?.followers },
+            { label: "Public repositories", value: github?.publicRepos },
+            { label: "Total stars", value: github?.totalStars },
           ]} />
-          <ProfileCard name="LeetCode" href={profile.links.leetcode} icon={<Code2 size={20} />} index="02" loading={leetcode.isPending} entries={[
-            { label: "Problems solved", value: leetcode.data?.totalSolved },
-            { label: "Profile percentile", value: leetcode.data?.topPercent != null ? `Top ${leetcode.data.topPercent}%` : undefined },
-            { label: "Contest rating", value: leetcode.data?.contestRating },
+          <ProfileCard name="LeetCode" href={profile.links.leetcode} icon={<Code2 size={20} />} index="02" loading={loading} entries={[
+            { label: "Problems solved", value: leetcode?.totalSolved },
+            { label: "Profile percentile", value: leetcode?.topPercent != null ? `Top ${leetcode.topPercent}%` : undefined },
+            { label: "Contest rating", value: leetcode?.contestRating },
           ]} />
-          <ProfileCard name="Codeforces" href={profile.links.codeforces} icon={<Trophy size={20} />} index="03" loading={codeforces.isPending} entries={[
-            { label: "Rating", value: codeforces.data?.rating },
-            { label: "Rank", value: codeforces.data?.rank },
-            { label: "Problems solved", value: codeforces.data?.problemsSolved },
+          <ProfileCard name="Codeforces" href={profile.links.codeforces} icon={<Trophy size={20} />} index="03" loading={loading} entries={[
+            { label: "Rating", value: codeforces?.rating },
+            { label: "Rank", value: codeforces?.rank },
+            { label: "Problems solved", value: codeforces?.problemsSolved },
           ]} />
-          <ProfileCard name="CodeChef" href={profile.links.codechef} icon={<Star size={20} />} index="04" loading={codechef.isPending} entries={[
-            { label: "Stars", value: codechef.data?.stars },
-            { label: "Rating", value: codechef.data?.rating },
-            { label: "DSA rating", value: codechef.data?.dsaRating },
-            { label: "Problems solved", value: codechef.data?.problemsSolved },
+          <ProfileCard name="CodeChef" href={profile.links.codechef} icon={<Star size={20} />} index="04" loading={loading} entries={[
+            { label: "Stars", value: codechef?.stars },
+            { label: "Rating", value: codechef?.rating },
+            { label: "DSA rating", value: codechef?.dsaRating },
+            { label: "Problems solved", value: codechef?.problemsSolved },
           ]} />
-          <ProfileCard name="HackerRank" href={profile.links.hackerrank} icon={<Award size={20} />} index="05" loading={hackerrank.isPending} entries={[
-            { label: "Badges", value: hackerrank.data?.badges },
-            { label: "Skill certifications", value: hackerrank.data?.skillCertifications },
+          <ProfileCard name="HackerRank" href={profile.links.hackerrank} icon={<Award size={20} />} index="05" loading={loading} entries={[
+            { label: "Badges", value: hackerrank?.badges },
+            { label: "Skill certifications", value: hackerrank?.skillCertifications },
             { label: "Profile", value: "View profile ↗" },
           ]} />
         </div>

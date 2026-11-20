@@ -1,3 +1,5 @@
+const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const profile = {
   name: "VANAPALLI S K RAMA KESHAVA SATYA SAI",
   title: "Computer Science Student | Competitive Programmer",
@@ -19,8 +21,8 @@ export const profile = {
     leetcode: "https://leetcode.com/u/Dominator_Zzz/",
     hackerrank: "https://www.hackerrank.com/profile/klu2300031222",
     codeforces: "https://codeforces.com/profile/klu2300031222",
-    resume: "/resume.pdf",
-    photo: "/profile.jpg",
+    resume: `${publicBasePath}/resume.pdf`,
+    photo: `${publicBasePath}/profile.jpg`,
   },
   currentFocus: [
     "Competitive Programming",

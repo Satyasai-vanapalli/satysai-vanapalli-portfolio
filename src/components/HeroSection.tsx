@@ -35,7 +35,7 @@ export default function HeroSection() {
         <div className="hero-visual">
           <div className="portrait-frame">
             <Image
-              src="/profile.jpg"
+              src={profile.links.photo}
               alt="Portrait of Satya Sai"
               fill
               priority

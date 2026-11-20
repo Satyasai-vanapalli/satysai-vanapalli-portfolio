@@ -2,14 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Code2, Database, Layers3, Trophy } from "lucide-react";
-
-type ProfileStats = Record<string, number | string | null | undefined>;
-
-async function fetchStats(url: string): Promise<ProfileStats> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("Profile data is unavailable");
-  return response.json() as Promise<ProfileStats>;
-}
+import { fetchProfileStats } from "@/lib/profile-stats";
 
 const groups = [
   { number: "01", title: "Programming", icon: Code2, skills: ["Java", "Kotlin", "C"] },
@@ -19,15 +12,16 @@ const groups = [
 ];
 
 export default function SkillsSection() {
-  const leetcode = useQuery({ queryKey: ["leetcode"], queryFn: () => fetchStats("/api/leetcode"), staleTime: 5 * 60 * 1000 });
-  const codeforces = useQuery({ queryKey: ["codeforces"], queryFn: () => fetchStats("/api/codeforces"), staleTime: 5 * 60 * 1000 });
-  const codechef = useQuery({ queryKey: ["codechef"], queryFn: () => fetchStats("/api/codechef"), staleTime: 5 * 60 * 1000 });
-  const solvedCounts = [leetcode.data?.totalSolved, codeforces.data?.problemsSolved, codechef.data?.problemsSolved];
+  const statsQuery = useQuery({ queryKey: ["profile-stats"], queryFn: fetchProfileStats, staleTime: 5 * 60 * 1000 });
+  const leetcode = statsQuery.data?.leetcode;
+  const codeforces = statsQuery.data?.codeforces;
+  const codechef = statsQuery.data?.codechef;
+  const solvedCounts = [leetcode?.totalSolved, codeforces?.problemsSolved, codechef?.problemsSolved];
   const numericSolvedCounts = solvedCounts.filter((count): count is number => typeof count === "number" && Number.isFinite(count));
   const totalSolved = numericSolvedCounts.length === solvedCounts.length
     ? numericSolvedCounts.reduce((total, count) => total + count, 0)
     : null;
-  const isLoadingTotal = leetcode.isPending || codeforces.isPending || codechef.isPending;
+  const isLoadingTotal = statsQuery.isPending;
 
   return (
     <section id="toolkit" className="section toolkit-section section-anchor">
@@ -50,9 +44,9 @@ export default function SkillsSection() {
                 {title === "Competitive programming" && (
                   <>
                     <span>
-                      {leetcode.data?.topPercent != null
-                        ? `LeetCode · Top ${leetcode.data.topPercent}%`
-                        : leetcode.isPending ? "LeetCode · Loading percentile…" : "LeetCode · Percentile unavailable"}
+                      {leetcode?.topPercent != null
+                        ? `LeetCode · Top ${leetcode.topPercent}%`
+                        : statsQuery.isPending ? "LeetCode · Loading percentile…" : "LeetCode · Percentile unavailable"}
                     </span>
                     <span aria-live="polite">
                       {totalSolved !== null
