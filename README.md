@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-//Open [http://localhost:3000](http://localhost:3000).
+open https://satyasai-vanapalli.github.io/satysai-vanapalli-portfolio/
 
 ## Build
 
