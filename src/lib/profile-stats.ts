@@ -9,6 +9,7 @@ export type ProfileStats = {
   codeforces: PlatformStats;
   codechef: PlatformStats;
   hackerrank: PlatformStats;
+  geeksforgeeks: PlatformStats;
 };
 
 export async function fetchProfileStats(): Promise<ProfileStats> {

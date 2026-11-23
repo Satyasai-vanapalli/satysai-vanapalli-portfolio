@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight, Award, Code2, Star, Trophy } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+import { SiGeeksforgeeks } from "react-icons/si";
 import { profile } from "@/data/profile";
 import { fetchProfileStats } from "@/lib/profile-stats";
 
@@ -47,6 +48,7 @@ export default function CodingProfilesSection() {
   const codeforces = statsQuery.data?.codeforces;
   const codechef = statsQuery.data?.codechef;
   const hackerrank = statsQuery.data?.hackerrank;
+  const geeksforgeeks = statsQuery.data?.geeksforgeeks;
   const solvedCounts = [leetcode?.totalSolved, codeforces?.problemsSolved, codechef?.problemsSolved];
   const numericSolvedCounts = solvedCounts.filter((count): count is number => typeof count === "number" && Number.isFinite(count));
   const totalSolved = numericSolvedCounts.length === solvedCounts.length
@@ -92,6 +94,13 @@ export default function CodingProfilesSection() {
             { label: "Badges", value: hackerrank?.badges },
             { label: "Skill certifications", value: hackerrank?.skillCertifications },
             { label: "Profile", value: "View profile ↗" },
+          ]} />
+          <ProfileCard name="GeeksforGeeks" href={profile.links.geeksforgeeks} icon={<SiGeeksforgeeks size={20} />} index="06" loading={loading} entries={[
+            { label: "Coding score", value: geeksforgeeks?.codingScore },
+            { label: "Problems solved", value: geeksforgeeks?.problemsSolved },
+            { label: "Monthly score", value: geeksforgeeks?.monthlyScore },
+            { label: "Institute rank", value: geeksforgeeks?.instituteRank },
+            { label: "Current streak", value: geeksforgeeks?.currentStreak },
           ]} />
         </div>
       </div>

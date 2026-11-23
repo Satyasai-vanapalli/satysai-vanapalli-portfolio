@@ -1,8 +1,15 @@
 {
-  "updatedAt": null,
+  "updatedAt": "2026-11-23T18:02:28.000Z",
   "github": { "followers": null, "following": null, "publicRepos": null, "totalStars": null },
   "leetcode": { "totalSolved": null, "contestRating": "Unavailable", "contestsAttended": null, "topPercent": null },
   "codeforces": { "rating": null, "rank": "Unavailable", "problemsSolved": null, "contestsAttended": null },
   "codechef": { "rating": null, "stars": "Unavailable", "dsaRating": null, "contestsParticipated": null, "problemsSolved": null },
-  "hackerrank": { "badges": 3, "skillCertifications": 2 }
+  "hackerrank": { "badges": 3, "skillCertifications": 2 },
+  "geeksforgeeks": {
+    "codingScore": 283,
+    "monthlyScore": 2,
+    "problemsSolved": 67,
+    "instituteRank": 240,
+    "currentStreak": 0
+  }
 }

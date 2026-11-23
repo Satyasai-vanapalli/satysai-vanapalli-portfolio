@@ -3,6 +3,12 @@ import { join } from "node:path";
 
 const timeout = () => AbortSignal.timeout(25_000);
 
+function asNumberOrNull(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 async function getJson(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -165,6 +171,20 @@ async function getGitHubStats() {
   };
 }
 
+async function getGeeksForGeeksStats() {
+  const result = await getJson("https://authapi.geeksforgeeks.org/api-get/user-profile-info/?handle=klu2300031222&article_count=false&redirect=true");
+  const data = result.data;
+  if (!data) throw new Error("GeeksforGeeks profile response was incomplete");
+
+  return {
+    codingScore: asNumberOrNull(data.score),
+    monthlyScore: asNumberOrNull(data.monthly_score),
+    problemsSolved: asNumberOrNull(data.total_problems_solved),
+    instituteRank: asNumberOrNull(data.institute_rank),
+    currentStreak: asNumberOrNull(data.pod_solved_current_streak),
+  };
+}
+
 async function useLiveStats(name, fetchStats, fallback) {
   try {
     return await fetchStats();
@@ -189,6 +209,9 @@ const stats = {
     rating: null, stars: "Unavailable", dsaRating: null, contestsParticipated: null, problemsSolved: null,
   }),
   hackerrank: { badges: 3, skillCertifications: 2 },
+  geeksforgeeks: await useLiveStats("GeeksforGeeks", getGeeksForGeeksStats, {
+    codingScore: null, monthlyScore: null, problemsSolved: null, instituteRank: null, currentStreak: null,
+  }),
 };
 
 await writeFile(join(process.cwd(), "public", "profile-stats.json"), `${JSON.stringify(stats, null, 2)}\n`);

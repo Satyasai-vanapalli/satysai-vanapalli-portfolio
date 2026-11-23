@@ -21,6 +21,7 @@ export const profile = {
     leetcode: "https://leetcode.com/u/Dominator_Zzz/",
     hackerrank: "https://www.hackerrank.com/profile/klu2300031222",
     codeforces: "https://codeforces.com/profile/klu2300031222",
+    geeksforgeeks: "https://www.geeksforgeeks.org/profile/klu2300031222",
     resume: `${publicBasePath}/resume.pdf`,
     photo: `${publicBasePath}/profile.jpg`,
   },
